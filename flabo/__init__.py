@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template, abort
-from .views import main_views
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -21,26 +20,9 @@ def create_app(): # 애플리케이션 팩토리
     # ORM
     db.init_app(app)
     migrate.init_app(app, db)
+    from . import models # 순환참조 문제 때문에 create_app 함수 바깥에서 호출하면 안된다.
 
-    '''@app.route('/')
-    @app.route('/<name>')
-    def hello_world(name='해찬'):
-        # abort(404) # 에러 발생하기
-        if request.method == "GET":
-            return render_template('hello.html', name=name)
-        else:
-            return f"{request.method}: Bad Request!!"
-
-    @app.route('/mypage')
-    def my_page():
-        return 'My Page!!'
-
-    # 에러 페이지 커스터마이징: 404에러에 대한 페이지 커스터마이징
-    @app.errorhandler(404)
-    def page_not_found(error):
-        return render_template('page_not_found.html'), 404 # 렌더링 해야 하는 에러 코드와 그에 대한 html 파일'''
-
-    # 위의 긴 코드가 아래의 한 줄로 바뀌며 main_views.py에서 정보를 불러오는 형식이 적용됐다.
+    from .views import main_views
     app.register_blueprint(main_views.bp)
 
     return app
