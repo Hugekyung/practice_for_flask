@@ -22,19 +22,9 @@ def create_app(): # 애플리케이션 팩토리
     migrate.init_app(app, db)
     from . import models # 순환참조 문제 때문에 create_app 함수 바깥에서 호출하면 안된다.
 
-    from .views import main_views
+    from .views import main_views, question_views, answer_views
     app.register_blueprint(main_views.bp)
+    app.register_blueprint(question_views.bp)
+    app.register_blueprint(answer_views.bp)
 
     return app
-
-
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         do_the_login()
-#     else:
-#         show_the_login_form()
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
