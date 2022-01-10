@@ -26,18 +26,18 @@ def _list():
     so = request.args.get('so', type=str, default='recent')
 
     # 정렬
-    if so == 'recommend':
+    if so == 'recommend': # 추천순(추천 투표 많은 순)
         sub_query = db.session.query(question_voter.c.question_id, func.count('*').label('num_voter')) \
             .group_by(question_voter.c.question_id).subquery()
         question_list = Question.query \
             .outerjoin(sub_query, Question.id == sub_query.c.question_id) \
             .order_by(sub_query.c.num_voter.desc(), Question.create_date.desc())
-    elif so == 'popular':
+    elif so == 'popular': # 인기순(댓글 많은 순)
         sub_query = db.session.query(Answer.question_id, func.count('*').label('num_answer')) \
             .group_by(Answer.question_id).subquery()
         question_list = Question.query.outerjoin(sub_query, Question.id == sub_query.c.question_id) \
             .order_by(sub_query.c.num_answer.desc(), Question.create_date.desc())
-    else:  # recent
+    else:  # recent 최신순
         question_list = Question.query.order_by(Question.create_date.desc())
 
     # 조회
